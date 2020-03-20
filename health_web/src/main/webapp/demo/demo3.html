@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div id="app">
+    <Button @click="changePsw">修改密码</Button>
+
+    <Modal
+            v-model="changePswData.changePswModel"
+            :closable="false"
+            :mask-closable="false"
+            title="修改密码"
+            @on-ok="changePswOk"
+            @on-cancel="changePswCancel">
+        <div style="margin-bottom: 5px;">
+            <p style="display: inline-block; width: 100px;">原密码：</p>
+            <Input type="password" :maxlength="20" v-model="changePswData.oldPsw" placeholder="请输入原密码..." style="width: 300px" @on-blur="oldPswValid" @on-focus="oldPswValid_focus"></Input>
+            <p style="display: inline; color: red;margin-left: 110px;" :style="{display: changePswData.oldPsw_pswLog_noBlank_Flag}">{{ changePswData.oldPsw_pswLog_noBlank }}</p>
+        </div>
+        <div style="margin-bottom: 5px;">
+            <p style="display: inline-block; width: 100px;">新密码：</p>
+            <Input type="password" :maxlength="20" v-model="changePswData.newPsw" placeholder="请输入新密码..." style="width: 300px" @on-blur="newPswValid" @on-focus="newPswValid_focus"></Input>
+            <p style="display: inline; color: red;margin-left: 110px;" :style="{display: changePswData.newPsw_pswLog_noBlank_Flag}">{{ changePswData.newPsw_pswLog_noBlank }}</p>
+            <p style="display: inline; color: red;margin-left: 110px;" :style="{display: changePswData.pswLog_pattern_Flag}">{{ changePswData.pswLog_pattern }}</p>
+        </div>
+        <div>
+            <p style="display: inline-block; width: 100px;">重复新密码：</p>
+            <Input type="password" :maxlength="20" v-model="changePswData.againNewPsw" placeholder="请再输入一次新密码..." style="width: 300px" @on-blur="againNewPswValid" @on-focus="againNewPswValid_focus"></Input>
+            <p style="display: inline; color: red;margin-left: 110px;" :style="{display: changePswData.againNewPsw_pswLog_noBlank_Flag}">{{ changePswData.againNewPsw_pswLog_noBlank }}</p>
+            <p style="display: inline; color: red;margin-left: 110px;" :style="{display: changePswData.pswLog_equality_Flag}">{{ changePswData.pswLog_equality }}</p>
+        </div>
+    </Modal>
+</div>
+
+
+</body>
+
+</html>
+<script>
+    var vue=new Vue({
+        el:"#app",
+        data:{
+            changePswData: {
+                changePswModel: false,
+
+                oldPsw: '',
+                oldPsw_pswLog_noBlank: '密码不能为空，请重新输入',
+                oldPsw_pswLog_noBlank_Flag: 'none',
+
+                newPsw: '',
+                newPsw_pswLog_noBlank: '密码不能为空，请重新输入',
+                newPsw_pswLog_noBlank_Flag: 'none',
+                pswLog_pattern: '密码由5-20位数字字母组成，请重新输入',
+                pswLog_pattern_Flag: 'none',
+
+                againNewPsw: '',
+                againNewPsw_pswLog_noBlank: '密码不能为空，请重新输入',
+                againNewPsw_pswLog_noBlank_Flag: 'none',
+                pswLog_equality: '两次输入密码不相等，请重新输入',
+                pswLog_equality_Flag: 'none'
+            }
+
+        },
+        methods:{
+            // 打开Model框
+            changePsw: function () {
+                this.changePswModel = true;
+            },
+// 验证输入框
+            oldPswValid: function() {
+                console.log(this.changePswData.oldPsw)
+                if(this.changePswData.oldPsw != ''){
+                    this.changePswData.oldPsw_pswLog_noBlank_Flag = 'none'
+                }else{
+                    this.changePswData.oldPsw_pswLog_noBlank_Flag = 'block'
+                }
+            },
+            oldPswValid_focus: function() {
+                this.changePswData.oldPsw_pswLog_noBlank_Flag = 'none'
+            },
+            newPswValid: function() {
+                console.log(this.changePswData.newPsw)
+                if(this.changePswData.newPsw != ''){
+                    this.changePswData.newPsw_pswLog_noBlank_Flag = 'none';
+                    let pattern = /^[a-zA-Z0-9]{6,20}$/;
+                    if(!pattern.test(this.changePswData.newPsw)){
+                        this.changePswData.pswLog_pattern_Flag = 'block';
+                    }else{
+                        this.changePswData.pswLog_pattern_Flag = 'none';
+                    }
+                }else{
+                    this.changePswData.newPsw_pswLog_noBlank_Flag = 'block'
+                }
+            },
+            newPswValid_focus: function() {
+                this.changePswData.newPsw_pswLog_noBlank_Flag = 'none';
+                this.changePswData.pswLog_pattern_Flag = 'none';
+            },
+            againNewPswValid: function() {
+                console.log(this.changePswData.againNewPsw)
+                if(this.changePswData.againNewPsw != ''){
+                    this.changePswData.againNewPsw_pswLog_noBlank_Flag = 'none';
+                    if(this.changePswData.againNewPsw != this.changePswData.newPsw){
+                        this.changePswData.pswLog_equality_Flag = 'block'
+                    }else{
+                        this.changePswData.pswLog_equality_Flag = 'none'
+                    }
+                }else{
+                    this.changePswData.againNewPsw_pswLog_noBlank_Flag = 'block'
+                }
+            },
+            againNewPswValid_focus: function() {
+                this.changePswData.againNewPsw_pswLog_noBlank_Flag = 'none';
+                this.changePswData.pswLog_equality_Flag = 'none'
+            },
+
+// 修改密码
+            changePswOk: function () {
+                let self = this;
+                console.log(self.validPsw())
+                if(self.validPsw() == 1){
+                    axios.post('#', {
+                        password: self.changePswData.oldPsw,
+                        newPassword: self.changePswData.newPsw
+                    }).then(function (response) {
+                        let data = response.data.data;
+                        let status = response.data.status;
+                        if(status == '0'){
+                            self.$Message.success(data);
+                        }
+                    }).catch(function (error) {
+                        self.$Message.error('修改密码失败，请重新修改!');
+                    })
+                }else{
+                    self.$Message.error('修改密码失败，请重新修改!');
+                }
+            },
+            changePswCancel: function () {
+
+            }
+
+
+        },
+        created:{
+
+        }
+    })
+</script>
+
+
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../js/healthmobile.js"></script>
+<script>
+    var username=getUrlParam('username')
+</script>

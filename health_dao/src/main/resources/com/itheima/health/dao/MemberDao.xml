@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress ALL -->
+<mapper namespace="com.itheima.health.dao.MemberDao">
+<!--1.根据手机号码查询一条会员数据-->
+    <select id="findByMemberTelephone" parameterType="String" resultType="Member">
+        select * from t_member where phoneNumber=#{telephone};
+    </select>
+<!-- 2.新增保存一条会员表数据-->
+    <insert id="saveMember" parameterType="order">
+<selectKey  resultType="Integer"  order="AFTER" keyProperty="id">
+    select LAST_INSERT_ID();
+</selectKey>
+   insert into t_member (fileNumber, name, sex, idCard, phoneNumber, regTime, password, email, birthday, remark) values(#{fileNumber}, #{name}, #{sex}, #{idCard}, #{phoneNumber}, #{regTime}, #{password}, #{email}, #{birthday}, #{remark});
+ </insert>
+
+    <!-- 根据会员id查询体检人-->
+    <select id="findByMemberId" parameterType="Integer" resultType="String">
+        select name from t_member where id=#{memberId};
+    </select>
+
+
+<!--  根据手机号查询一条会员数据-->
+    <select id="findByTelephone" resultType="member" parameterType="String">
+        SELECT * from  t_member where phoneNumber=#{telephone};
+
+    </select>
+
+<!-- 新增一条数据-->
+    <insert id="addMember" parameterType="member">
+       insert into t_member (fileNumber, name, sex, idCard, phoneNumber, regTime, password, email, birthday, remark) values ( #{fileNumber}, #{name}, #{sex}, #{idCard}, #{phoneNumber}, #{regTime}, #{password}, #{email}, #{birthday}, #{remark});
+    </insert>
+<!--根据套餐id查询会员数量-->
+    <select id="countMemberfindBySetmealId" parameterType="Integer" resultType="Integer">
+     select count(*) from t_member where id in (select member_id from t_order where setmeal_id=#{id});
+ </select>
+
+<!--    1.当天新增会员-->
+    <select parameterType="String" id="findTodayNewMember" resultType="Integer">
+        select count(*)from t_member where regTime=#{reportDate};
+    </select>
+<!--    2.查看总会员数-->
+    <select id="findTotalMember" resultType="Integer">
+        select count(*) from t_member;
+    </select>
+<!--3.本周新增会员数-->
+    <select id="findThisWeekNewMember" parameterType="String" resultType="Integer">
+        select count(*) from t_member where regTime &gt;=#{firstWeekMonday};
+    </select>
+<!--    4.本月新增会员-->
+    <select id="findThisMonthNewMember"  parameterType="String" resultType="Integer">
+        select count(*) from t_member where regTime &gt;=#{firstMonthDay};
+    </select>
+</mapper>

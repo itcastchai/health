@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.OrderSettingDao">
+<!--1.查询预约日期对应表中的预约数量-->
+    <select id="selectCount" parameterType="java.util.Date" resultType="int">
+          select count(*) from t_ordersetting where orderDate=#{orderDate};
+    </select>
+    <!--修改-->
+    <update id="updateOrderSeetting" parameterType="orderSetting">
+        update t_ordersetting set number=#{number} where orderDate=#{orderDate};
+    </update>
+    <!--新增-->
+    <insert id="addOrderSeetting" parameterType="orderSetting">
+        insert into t_ordersetting (orderDate, number ,reservations) values (#{orderDate},#{number},#{reservations})
+    </insert>
+    <!--查询当前月的预约数据-->
+    <select id="reservationByMonth" parameterType="map" resultType="orderSetting">
+        select * from t_ordersetting where orderDate between #{beginDate} and #{endDate};
+    </select>
+
+
+    <!--   设置预约数量-->
+    <!--    1.查询预约数据库是否有该预约日期-->
+    <select id="reservationCount"  parameterType="java.util.Date" resultType="Integer">
+        select count(*) from t_ordersetting where orderDate=#{orderDate};
+    </select>
+
+    <!--2.若该预约日期存在，则执行修改数据-->
+    <update id="updateReservation" parameterType="orderSetting">
+      update t_ordersetting set number=#{number},reservations=#{reservations} where orderDate=#{orderDate};
+    </update>
+<!--    2.预约日期不存在，则执行新增保存-->
+    <insert id="AddReservation" parameterType="orderSetting">
+    insert into t_ordersetting ( orderDate, number, reservations) values (#{orderDate}, #{number}, #{reservations})
+
+    </insert>
+<!--    根据预约日期查询一条数据-->
+    <select id="orderSettingByOrderDate" parameterType="java.util.Date" resultType="orderSetting">
+        select * from t_ordersetting where orderDate=#{date};
+    </select>
+<!--    修改保存一条预约设置表数据-->
+    <update id="editOrderSetting" parameterType="orderSetting">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
+</mapper>

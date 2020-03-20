@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress ALL -->
+<mapper namespace="com.itheima.health.dao.UserDao">
+
+<resultMap id="userMap" type="user">
+    <id property="id" column="id" ></id>
+    <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findByUserId" ></collection>
+</resultMap>
+<!--  根据用户名获取用户信息-->
+<select id="findByUsername" parameterType="String" resultMap="userMap">
+    select u.* from  t_user u where username=#{username};
+</select>
+
+<!--&lt;!&ndash;    根据用户名获取密码&ndash;&gt;-->
+<!--    <select id="findName" parameterType="String" resultType="String">-->
+<!--        select password from t_user where username=#{username};-->
+<!--    </select>-->
+<!--    <update id="updatePassword" parameterType="map">-->
+<!--     update t_user set password=#{newPasswordCode} where username=#{username};-->
+<!--    </update>-->
+
+</mapper>

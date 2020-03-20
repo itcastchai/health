@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.SetmealDao">
+    <!--向表t_setmeal中插入一条数据-->
+   <insert id="handleAdd" parameterType="setmeal">
+<selectKey resultType="Integer" order="AFTER" keyProperty="id">
+    select LAST_INSERT_ID() ;
+</selectKey>
+       insert into t_setmeal(name, code, helpCode, sex, age, price, remark, attention, img) values (#{name}, #{code}, #{helpCode}, #{sex}, #{age}, #{price}, #{remark}, #{attention}, #{img})
+   </insert>
+<!--    更新关联表数据-->
+    <insert id="insertSetmealIdAndcheckgroupId" >
+        insert into t_setmeal_checkgroup(setmeal_id, checkgroup_id) VALUES (#{setmealId},#{checkgroupId})
+    </insert>
+<!--分页查询-->
+    <select id="findPage" parameterType="String" resultType="Setmeal" >
+        select * from t_setmeal
+       <if test="value!=null and value.length>0">
+           where code=#{value} or code=#{value} or helpCode=#{value}
+       </if>
+    </select>
+<!-- 根据套餐表id查询一条数据   -->
+    <select id="findSetmealById" parameterType="Integer" resultType="setmeal">
+        select * from t_setmeal where id=#{id};
+    </select>
+<!-- 根据套餐表id查询关联表中检查组对应的id值-->
+    <select id="findById" parameterType="Integer" resultType="Integer">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id}
+    </select>
+
+    <!--根据id查询除关联表检查组与套餐的关系单数据-->
+    <select id="findSetmealAndCkgroupAssociation" parameterType="Integer" resultType="Integer">
+        select count(*)  FROM t_setmeal_checkgroup WHERE setmeal_id =#{setmealId};
+    </select>
+
+<!--根据id删除关联表t_checkitem单数据-->
+    <delete id="deleteSetmealAndCkgroupAssociation" parameterType="Integer">
+        delete FROM t_setmeal_checkgroup WHERE setmeal_id =#{setmealId};
+    </delete>
+<!-- 修改保存一条套餐表数据-->
+    <update id="edit" parameterType="setmeal">
+        update t_setmeal
+        <set>
+            <if test="name!=null and name.length>0">name=#{name},</if>
+            <if test="code!=null and code.length>0">code=#{code},</if>
+            <if test="helpCode!=null and helpCode.length>0">helpCode=#{helpCode},</if>
+            <if test="sex!=null and sex.length>0">sex=#{sex},</if>
+            <if test="age!=null and age.length>0">age=#{age},</if>
+            <if test="price!=null">price=#{price},</if>
+            <if test="remark!=null and remark.length>0">remark=#{remark},</if>
+            <if test="attention!=null and attention.length>0">attention=#{attention},</if>
+            <if test="img!=null and img.length>0">img=#{img},</if>
+        </set>
+
+     where id=#{id}
+    </update>
+<!--  新增关联表数据-->
+    <insert id="insertSetmealAndCheckgroupAssociation">
+     insert into t_setmeal_checkgroup (setmeal_id, checkgroup_id) values (#{setmealId},#{checkgroupId});
+    </insert>
+<!--根据id查询关联表数据-->
+    <select id="selectAssouciationById" parameterType="Integer" resultType="long">
+        select count(*) from t_setmeal_checkgroup where setmeal_id=#{id}
+    </select>
+<!-- 根据id删除套餐表数据-->
+    <delete id="handleDelete" parameterType="integer">
+        delete from t_setmeal where id=#{id};
+    </delete>
+    <!--查询所有套餐数据-->
+    <select id="findAll" resultMap="setmealMap">
+        select * from t_setmeal;
+    </select>
+<!--根据id查询套餐-->
+    <!--resultMap="setmealMap"-->
+    <select id="findByIdSetmeal" parameterType="int" resultMap="setmealMap">
+    select * from t_setmeal where id=#{id}
+</select>
+    <resultMap type="Setmeal" id="setmealMap" >
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="helpCode" property="helpCode"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="price" property="price"/>
+        <result column="remark" property="remark"/>
+        <result column="attention" property="attention"/>
+        <result column="img" property="img"/>
+        <collection  property="checkGroups" column="id" select="com.itheima.health.dao.CheckGroupDao.findByIdCheckGroup" />
+    </resultMap>
+
+
+<!-- 根据id查询图片-->
+  <select id="findImg" parameterType="Integer" resultType="String">
+      select img from t_setmeal where id=#{id}
+  </select>
+<!--    查询所有套餐
+    <select id="findAllsetmeal" resultType="setmeal">
+        select*from t_setmeal;
+    </select>-->
+
+<!--查询检查组于套餐关联数据-->
+    <select id="getSetealAssociationCheckGroup" parameterType="Integer" resultType="Integer">
+        select count(*) from t_setmeal where id in(select setmeal_id from t_setmeal_checkgroup where checkgroup_id=#{id})
+    </select>
+<!--  查询检查组于检查项与套餐的关系-->
+    <select id="getSetealAssociationCheckGroupAndcheckItem" parameterType="Integer" resultType="Integer">
+        select count(*) from t_setmeal where id in(select setmeal_id from t_setmeal_checkgroup where checkgroup_id in(select checkgroup_id from t_checkgroup_checkitem where checkitem_id=#{id}) )
+    </select>
+
+</mapper>

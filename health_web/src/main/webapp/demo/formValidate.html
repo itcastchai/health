@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+
+<body>
+<div id="app">
+    <el-form  class="user-account-key" ref="form" :model="form" :rules="rules"  label-width="100px">
+        <el-form-item label="用户名" prop="username"  >
+            <el-input type="username"  placeholder="username" v-model="form.username" disabled  ></el-input>
+        </el-form-item>
+        <el-form-item label="原密码" prop="password"  >
+            <el-input type="password" placeholder="请输入原密码" v-model="form.password"   ></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+            <el-input type="password" placeholder="请设置新密码" v-model="form.newPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="newPassword2">
+            <el-input type="password" placeholder="请确认新密码" v-model="form.newPassword2"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="onSubmit('form')">保存</el-button>
+            <el-button @click="$refs['form'].resetFields()">重置</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+
+</body>
+</html>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../js/healthmobile.js"></script>
+<script>
+    var username=getUrlParam('username')
+</script>
+<script>
+    var vue=new Vue({
+        el:'#app',
+        data:{
+        /*    //此处即表单发送之前验证
+            validateNewPassword: validateNewPassword = (rule, value, callback) => {
+                if (value === this.form.password) {
+                    callback(new Error('新密码不能与原密码相同!'))
+                } else {
+                    callback()
+                }
+            },
+            validateNewPassword2: validateNewPassword2 = (rule, value, callback) => {
+                if (value !== this.form.newPassword) {
+                    callback(new Error('与新密码不一致!'))
+                } else {
+                    callback()
+                }
+            },*/
+
+                form: {},
+                rules: {
+                    password: [
+                        { required: true, message: '请输入原密码', trigger: 'blur' }
+                    ],
+                    newPassword: [
+                        { required: true, message: '请设置新密码', trigger: 'blur' },
+                        { validator: validateNewPassword, trigger: 'blur' }
+                    ],
+                    newPassword2: [
+                        { required: true, message: '请确认新密码', trigger: 'blur' },
+                        { validator: validateNewPassword2, trigger: 'blur' }
+                    ]
+                }
+
+        },
+        created(){
+           this.form.username=username;
+        },
+
+        methods:{
+
+
+
+
+            onSubmit (formName) {
+                debugger;
+                this.$refs[formName].validate(valid => {
+                    if (valid) {
+                        //let { newPassword, password } = this.form;
+                        // this.$message.success('密码已修改')
+                        //修改密码提交发送
+                        axios.post("/user/updatePassword1.do",this.form()).then((response)=>{
+                            if (response.data.flag) {
+                                this.$message({
+                                    type:'success',
+                                    message:response.data.message,
+                                });
+                                //修改密码成功能跳转到登录页面
+                                window.location.href="../login.html"
+                            }else {
+                                this.$message.error(response.data.message)
+                            }
+                        })
+                    } else {
+                        this.$message.error('请正确填写表单');
+                        return false
+                    }
+                })
+            }
+        },
+
+
+    });
+</script>

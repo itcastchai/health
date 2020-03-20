@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<body>
+<div id="app">
+
+</div>
+</body>
+</html>
+<script>
+    var vue=new Vue({
+        el:'#app',
+        data () {
+            //此处即表单发送之前验证
+            let validateNewPassword = (rule, value, callback) => {
+                if (value === this.form.password) {
+                    callback(new Error('新密码不能与原密码相同!'))
+                } else {
+                    callback()
+                }
+            };
+            let validateNewPassword2 = (rule, value, callback) => {
+                if (value !== this.form.newPassword) {
+                    callback(new Error('与新密码不一致!'))
+                } else {
+                    callback()
+                }
+            };
+            return {
+                form: {},
+                rules: {
+                    password: [
+                        { required: true, message: '请输入原密码', trigger: 'blur' }
+                    ],
+                    newPassword: [
+                        { required: true, message: '请设置新密码', trigger: 'blur' },
+                        { validator: validateNewPassword, trigger: 'blur' }
+                    ],
+                    newPassword2: [
+                        { required: true, message: '请确认新密码', trigger: 'blur' },
+                        { validator: validateNewPassword2, trigger: 'blur' }
+                    ]
+                }
+            }
+        },
+
+        methods: {
+            onSubmit (formName) {
+                this.$refs[formName].validate(valid => {
+                    if (valid) {
+                        let { newPassword, password } = this.form;
+                        updatePassword({ newPassword, password }).then(() => {
+                            this.$message.success('密码已修改')
+                        })
+                    } else {
+                        this.$message.error('请正确填写表单');
+                        return false
+                    }
+                })
+            }
+        }
+
+    });
+</script>

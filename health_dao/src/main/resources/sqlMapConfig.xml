@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+<!--   把settings标签放到typeAliases之前-->
+<!--    <settings>
+      &lt;!&ndash;   启动延迟加载&ndash;&gt;
+        <setting name="lazyLoadingEnabled" value="true"/>
+   &lt;!&ndash;      禁用积极加载：使用按需加载&ndash;&gt;
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>-->
+ <!--   参数别名-->
+    <typeAliases>
+        <package name="com.itheima.health.pojo"/>
+    </typeAliases>
+<!--    <plugins>
+        &lt;!&ndash; com.github.pagehelper 为 PageHelper 类所在包名 &ndash;&gt;
+        <plugin interceptor="com.github.pagehelper.PageHelper">
+            &lt;!&ndash; 设置数据库类型 Oracle,Mysql,MariaDB,SQLite,Hsqldb,PostgreSQL 六种数据库&ndash;&gt;
+            <property name="dialect" value="mysql"/>
+        </plugin>
+    </plugins>--><!--
+   映射器位置-->
+    <mappers>
+        <package name="com.itheima.health.dao"/>
+    </mappers>
+
+</configuration>

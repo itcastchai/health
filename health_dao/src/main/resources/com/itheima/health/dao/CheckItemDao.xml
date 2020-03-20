@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.CheckItemDao">
+    <!--新增-->
+    <insert id="add" parameterType="checkItem">
+        insert into t_checkitem(code,name,sex,age,price,type,remark,attention)
+        values
+        (#{code},#{name},#{sex},#{age},#{price},#{type},#{remark},#{attention})
+    </insert>
+<!--   分页查询-->
+    <select id="selectQueryString" parameterType="string" resultType="checkItem" >
+        select*from t_checkitem
+        <if test="value!=null and value.length>0">
+             where code=#{value} or name=#{value}
+        </if>
+
+    </select>
+<!-- 根据id查询一条数据-->
+    <select id="findById" parameterType="Integer" resultType="checkItem">
+        select * from t_checkitem where id=#{id}
+    </select>
+
+<!--   修改数据-->
+    <update id="edit" parameterType="checkItem">
+        update t_checkitem
+        <set>
+        <if test="code!=null and code.length>0"> code=#{code},</if>
+        <if test="name!=null and name.length>0">name=#{name},</if>
+        <if test="sex!=null and sex.length>0"> sex=#{sex},</if>
+        <if test="age!=null and age.length>0"> age=#{age},</if>
+        <if test="price!=null"> price=#{price},</if>
+        <if test="type!=null and type.length>0"> type=#{type},</if>
+        <if test="remark!=null and remark.length>0"> remark=#{remark},</if>
+        <if test="attention!=null and attention.length>0"> attention=#{attention}</if>
+        </set>
+      where id=#{id}
+    </update>
+    <!--删除-->
+  <delete id="deleteId" parameterType="Integer">
+      delete from t_checkitem where id=#{id}
+  </delete>
+    <select id="findCountDeleteId" parameterType="Integer" resultType="Long">
+        select count(*)from t_checkgroup_checkitem where checkitem_id=#{id}
+    </select>
+<!--查询-->
+    <select id="findAll" resultType="CheckItem">
+        select*from t_checkitem
+    </select>
+
+<!-- 根据检查组id查询检查项信息-->
+    <select id="findByIdCheckItem" resultType="CheckItem" parameterType="int">
+        select * from t_checkitem where id in(select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id})
+    </select>
+<!-- 删除关联表数据-->
+    <delete id="deleteAssouciationId" parameterType="Integer">
+        delete from t_checkgroup_checkitem where checkitem_id=#{id};
+    </delete>
+   <!--  查询检查组与检查项及套餐的关系
+
+        <select id="SetealAssociationCheckGroupAndCheckItem"  parameterType="Integer" resultType="Integer">
+            select count(*) from t_setmeal,t_checkgroup ,t_checkitem c where c.id=#{id}
+        </select>-->
+    </mapper>
